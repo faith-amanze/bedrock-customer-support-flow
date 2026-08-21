@@ -1,0 +1,15 @@
+{
+  "name": "customer-support-guardrail",
+  "description": "Diagnostic: PROMPT_ATTACK disabled to isolate cause of false positives",
+  "contentPolicyConfig": {
+    "filtersConfig": [
+      {"type": "SEXUAL", "inputStrength": "HIGH", "outputStrength": "HIGH"},
+      {"type": "VIOLENCE", "inputStrength": "HIGH", "outputStrength": "HIGH"},
+      {"type": "HATE", "inputStrength": "HIGH", "outputStrength": "HIGH"},
+      {"type": "INSULTS", "inputStrength": "MEDIUM", "outputStrength": "MEDIUM"},
+      {"type": "MISCONDUCT", "inputStrength": "HIGH", "outputStrength": "HIGH"}
+    ]
+  },
+  "blockedInputMessaging": "I'm sorry, I can't process that request. Please rephrase or call our support line at 1-800-555-0199.",
+  "blockedOutputsMessaging": "I'm sorry, I can't provide that response. Please call our support line at 1-800-555-0199 for help."
+}

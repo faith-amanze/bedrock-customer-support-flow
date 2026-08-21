@@ -2,6 +2,7 @@
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 from typing import Any, Dict
 
@@ -87,21 +88,27 @@ def main():
             reference = t.get("expected", "")
             prompt = t.get("prompt", {})
 
-            try:
-                result = invoke_flow_once(
-                    client=client,
-                    flow_identifier=args.flow_id,
-                    flow_alias_identifier=args.flow_alias_id,
-                    input_node_name=input_node_name,
-                    prompt=prompt,
-                    enable_trace=args.enable_trace,
-                )
-                response_text = result["final_output_text"]
-                n_ok += 1
-            except Exception as e:
-                # If the Flow errors, still emit a record so the eval run captures failures
-                print(e)
-                response_text = f"[FLOW_ERROR] {type(e).__name__}: {e}"
+            max_attempts = 3
+            response_text = None
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    result = invoke_flow_once(
+                        client=client,
+                        flow_identifier=args.flow_id,
+                        flow_alias_identifier=args.flow_alias_id,
+                        input_node_name=input_node_name,
+                        prompt=prompt,
+                        enable_trace=args.enable_trace,
+                    )
+                    response_text = result["final_output_text"]
+                    n_ok += 1
+                    break
+                except Exception as e:
+                    print(f"Attempt {attempt} failed: {e}")
+                    if attempt == max_attempts:
+                        response_text = f"[FLOW_ERROR] {type(e).__name__}: {e}"
+                    else:
+                        time.sleep(5)
 
             # Bedrock Evaluations LLM-as-a-judge (BYOI) input JSONL record
             record = {
