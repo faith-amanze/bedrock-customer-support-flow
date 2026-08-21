@@ -29,7 +29,7 @@ Full details and evaluation notes: [README_evaluation.md](./README_evaluation.md
 | Flow test - bug report creation | `screenshots/07-flow-test-bug-report.png` |
 | Flow test - bug report with follow-up | Not available - blocked by the same Agent limitation |
 | DynamoDB BugReports record | `screenshots/06-dynamodb-bug-report-record.png` |
-| FAQ prompt embedded content | `screenshots/04-faq-prompt-embedded-content.png` |
+| FAQ Knowledge Base config + generation prompt | `screenshots/04-faq-knowledge-base-config.png` (see Known Limitations for the InvokeFlow API caveat) |
 | Flow test - covered FAQ question | `screenshots/09-flow-test-faq-covered.png` |
 | Flow test - uncovered FAQ question | `screenshots/10-flow-test-faq-uncovered.png` |
 | Flow test - other request | `screenshots/11-flow-test-other-request.png` |
@@ -78,3 +78,4 @@ Once the inference source was corrected to explicitly use "Bring your own infere
 **Average Correctness score: 0.714** across 7 prompts, with a clear bimodal distribution -- 2 prompts scored ~0 (the two KB-affected test cases, t2_platform_question and t4_uncovered_faq, correctly penalized for their [FLOW_ERROR] responses) and 5 prompts scored ~0.85-0.9 (the genuinely successful responses: bug report, the three other-request variants, and prompt injection).
 
 This 0.714 score is the accurate, current reflection of automated evaluation via InvokeFlow, honestly capturing the impact of the managed Knowledge Base API limitation described above. It should be read alongside the console screenshots above, which confirm the Platform Question path works correctly when the KB limitation isn't in play.
+
