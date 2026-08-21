@@ -1,0 +1,13 @@
+﻿{
+    "name": "v1",
+    "routingConfiguration": [
+        {
+            "flowVersion": "1"
+        }
+    ],
+    "flowId": "VJD7SPYVVH",
+    "id": "46ITIXBXP3",
+    "arn": "arn:aws:bedrock:us-east-1:843794985908:flow/VJD7SPYVVH/alias/46ITIXBXP3",
+    "createdAt": "2026-08-21T05:35:06.091410+00:00",
+    "updatedAt": "2026-08-21T05:35:06.091410+00:00"
+}

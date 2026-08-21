@@ -1,0 +1,189 @@
+{
+    "name": "customer-request-flow",
+    "executionRoleArn": "arn:aws:iam::843794985908:role/service-role/AmazonBedrockExecutionRoleForFlows_Z8WDOV56XG8",
+    "id": "VJD7SPYVVH",
+    "arn": "arn:aws:bedrock:us-east-1:843794985908:flow/VJD7SPYVVH",
+    "status": "NotPrepared",
+    "createdAt": "2026-08-19T08:34:33.535340446Z",
+    "updatedAt": "2026-08-20T07:33:47.890688360Z",
+    "version": "DRAFT",
+    "definition": {
+        "nodes": [
+            {
+                "name": "FlowInputNode",
+                "type": "Input",
+                "configuration": {
+                    "input": {}
+                },
+                "outputs": [
+                    {
+                        "name": "document",
+                        "type": "String"
+                    }
+                ]
+            },
+            {
+                "name": "ClassifierPrompt",
+                "type": "Prompt",
+                "configuration": {
+                    "prompt": {
+                        "sourceConfiguration": {
+                            "inline": {
+                                "templateType": "TEXT",
+                                "templateConfiguration": {
+                                    "text": {
+                                        "text": "You are a message classifier for a customer support chatbot. Classify the customer's message into exactly one category.\n\nCategories:\n- BUG_REPORT: the customer is reporting a problem, error, or something not working correctly on the platform\n- PLATFORM_QUESTION: the customer is asking about orders, shipping, returns, payments, or how the platform works\n- OTHER_REQUEST: the message doesn't clearly fit either category above\n\nCustomer message: {{topic}}\n\nRespond with ONLY the category name and absolutely nothing else. Do not explain your reasoning. Do not add punctuation. Do not add any other words. Your entire response must be exactly one of: BUG_REPORT, PLATFORM_QUESTION, OTHER_REQUEST",
+                                        "inputVariables": [
+                                            {
+                                                "name": "topic"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "modelId": "amazon.nova-pro-v1:0",
+                                "inferenceConfiguration": {
+                                    "text": {
+                                        "temperature": 0.699999988079071,
+                                        "topP": 1.0,
+                                        "maxTokens": 512,
+                                        "stopSequences": []
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "inputs": [
+                    {
+                        "name": "topic",
+                        "type": "String",
+                        "expression": "$.data"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "modelCompletion",
+                        "type": "String"
+                    }
+                ]
+            },
+            {
+                "name": "BugReportOutput",
+                "type": "Output",
+                "configuration": {
+                    "output": {}
+                },
+                "inputs": [
+                    {
+                        "name": "document",
+                        "type": "String",
+                        "expression": "$.data"
+                    }
+                ]
+            },
+            {
+                "name": "PlatformQuestionOutput",
+                "type": "Output",
+                "configuration": {
+                    "output": {}
+                },
+                "inputs": [
+                    {
+                        "name": "document",
+                        "type": "String",
+                        "expression": "$.data"
+                    }
+                ]
+            },
+            {
+                "name": "OtherRequestOutput",
+                "type": "Output",
+                "configuration": {
+                    "output": {}
+                },
+                "inputs": [
+                    {
+                        "name": "document",
+                        "type": "String",
+                        "expression": "$.data"
+                    }
+                ]
+            },
+            {
+                "name": "FallbackOutput",
+                "type": "Output",
+                "configuration": {
+                    "output": {}
+                },
+                "inputs": [
+                    {
+                        "name": "document",
+                        "type": "String",
+                        "expression": "$.data"
+                    }
+                ]
+            },
+            {
+                "name": "ConditionNode_1",
+                "type": "Condition",
+                "configuration": {
+                    "condition": {
+                        "conditions": [
+                            {
+                                "name": "Condition",
+                                "expression": "conditionInput == \"BUG_REPORT\""
+                            },
+                            {
+                                "name": "default"
+                            }
+                        ]
+                    }
+                },
+                "inputs": [
+                    {
+                        "name": "conditionInput",
+                        "type": "String",
+                        "expression": "$.data"
+                    }
+                ]
+            }
+        ],
+        "connections": [
+            {
+                "type": "Conditional",
+                "name": "ConditionNode_1ConditionNode0ToBugReportOutputFlowOutputNode0",
+                "source": "ConditionNode_1",
+                "target": "BugReportOutput",
+                "configuration": {
+                    "conditional": {
+                        "condition": "Condition"
+                    }
+                }
+            },
+            {
+                "type": "Data",
+                "name": "FlowInputNodeFlowInputNode0ToClassifierPromptPromptsNode0",
+                "source": "FlowInputNode",
+                "target": "ClassifierPrompt",
+                "configuration": {
+                    "data": {
+                        "sourceOutput": "document",
+                        "targetInput": "topic"
+                    }
+                }
+            },
+            {
+                "type": "Data",
+                "name": "ClassifierPromptPromptsNode0ToBugReportOutputFlowOutputNode0",
+                "source": "ClassifierPrompt",
+                "target": "BugReportOutput",
+                "configuration": {
+                    "data": {
+                        "sourceOutput": "modelCompletion",
+                        "targetInput": "document"
+                    }
+                }
+            }
+        ]
+    }
+}

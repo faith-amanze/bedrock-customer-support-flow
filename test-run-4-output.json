@@ -1,0 +1,248 @@
+﻿{
+    "flowExecutionEvents": [
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "How long do I have to return an item?"
+                        },
+                        "name": "document",
+                        "next": [
+                            {
+                                "inputFieldName": "question",
+                                "nodeName": "OtherRequestPrompt"
+                            },
+                            {
+                                "inputFieldName": "topic",
+                                "nodeName": "ClassifierPrompt"
+                            },
+                            {
+                                "inputFieldName": "question",
+                                "nodeName": "PlatformQuestionPrompt"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "FlowInputNode",
+                "timestamp": "2026-08-21T05:08:06.084916+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "How long do I have to return an item?"
+                        },
+                        "name": "topic",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "FlowInputNode",
+                            "outputFieldName": "document"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ClassifierPrompt",
+                "timestamp": "2026-08-21T05:08:06.422879+00:00"
+            }
+        },
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "PLATFORM_QUESTION"
+                        },
+                        "name": "modelCompletion",
+                        "next": [
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "FallbackOutput"
+                            },
+                            {
+                                "inputFieldName": "conditionInput",
+                                "nodeName": "ConditionNode_1"
+                            },
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "BugReportOutput"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ClassifierPrompt",
+                "timestamp": "2026-08-21T05:08:07.484123+00:00"
+            }
+        },
+        {
+            "nodeActionEvent": {
+                "nodeName": "ClassifierPrompt",
+                "operationName": "Converse",
+                "operationRequest": {
+                    "requestMetadata": {},
+                    "promptVariables": {},
+                    "system": [],
+                    "additionalModelRequestFields": null,
+                    "modelId": "amazon.nova-pro-v1:0",
+                    "inferenceConfig": {
+                        "maxTokens": 512,
+                        "temperature": 0.7,
+                        "topP": 1.0,
+                        "stopSequences": []
+                    },
+                    "additionalModelResponseFieldPaths": [],
+                    "messages": [
+                        {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": "You are a message classifier for a customer support chatbot. Classify the customer's message into exactly one category.\n\nCategories:\n- BUG_REPORT: the customer is reporting a problem, error, or something not working correctly on the platform\n- PLATFORM_QUESTION: the customer is asking about orders, shipping, returns, payments, or how the platform works\n- OTHER_REQUEST: the message doesn't clearly fit either category above\n\nCustomer message: How long do I have to return an item?\n\nRespond with ONLY the category name and absolutely nothing else. Do not explain your reasoning. Do not add punctuation. Do not add any other words. Your entire response must be exactly one of: BUG_REPORT, PLATFORM_QUESTION, OTHER_REQUEST"
+                                }
+                            ],
+                            "role": "user"
+                        }
+                    ]
+                },
+                "operationResponse": {
+                    "output": {
+                        "message": {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": "PLATFORM_QUESTION"
+                                }
+                            ],
+                            "role": "assistant"
+                        },
+                        "type": "MESSAGE"
+                    },
+                    "stopReason": "end_turn",
+                    "sdkHttpResponse": {
+                        "statusText": "OK",
+                        "statusCode": 200,
+                        "successful": true
+                    },
+                    "responseMetadata": {
+                        "metadata": {
+                            "Connection": "keep-alive",
+                            "x-amzn-RequestId": "fce150db-e7f1-47de-9aba-264332bd0fda",
+                            "AWS_REQUEST_ID": "fce150db-e7f1-47de-9aba-264332bd0fda",
+                            "Content-Length": "220",
+                            "Date": "Fri, 21 Aug 2026 05:08:07 GMT",
+                            "Content-Type": "application/json"
+                        }
+                    },
+                    "metrics": {
+                        "latencyMs": 316
+                    },
+                    "usage": {
+                        "inputTokens": 156,
+                        "outputTokens": 6,
+                        "totalTokens": 162,
+                        "cacheDetails": []
+                    }
+                },
+                "requestId": "fce150db-e7f1-47de-9aba-264332bd0fda",
+                "serviceName": "bedrock",
+                "timestamp": "2026-08-21T05:08:07.545069+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "PLATFORM_QUESTION"
+                        },
+                        "name": "conditionInput",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "ClassifierPrompt",
+                            "outputFieldName": "modelCompletion"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ConditionNode_1",
+                "timestamp": "2026-08-21T05:08:07.797117+00:00"
+            }
+        },
+        {
+            "conditionResultEvent": {
+                "nodeName": "ConditionNode_1",
+                "satisfiedConditions": [
+                    {
+                        "conditionName": "PlatformQuestion"
+                    }
+                ],
+                "timestamp": "2026-08-21T05:08:08.110392+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "How long do I have to return an item?"
+                        },
+                        "name": "question",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "FlowInputNode",
+                            "outputFieldName": "document"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "PlatformQuestionPrompt",
+                "timestamp": "2026-08-21T05:08:08.363438+00:00"
+            }
+        },
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "You can return most items within 30 days of delivery as long as theyÆre unused and in original packaging (unless the item arrived defective). If you need further assistance with returns, please contact our support line at 1-800-555-0199."
+                        },
+                        "name": "modelCompletion",
+                        "next": [
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "PlatformQuestionOutput"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "PlatformQuestionPrompt",
+                "timestamp": "2026-08-21T05:08:09.219132+00:00"
+            }
+        },
+        {
+            "nodeActionEvent": {
+                "nodeName": "PlatformQuestionPrompt",
+                "operationName": "Converse",
+                "operationRequest": {
+                    "requestMetadata": {},
+                    "promptVariables": {},
+                    "system": [],
+                    "additionalModelRequestFields": null,
+                    "modelId": "amazon.nova-pro-v1:0",
+                    "inferenceConfig": {
+                        "maxTokens": 512,
+                        "temperature": 0.7,
+                        "topP": 1.0,
+                        "stopSequences": []
+                    },
+                    "additionalModelResponseFieldPaths": [],
+                    "messages": [
+                        {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": 

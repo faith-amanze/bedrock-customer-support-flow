@@ -1,0 +1,248 @@
+﻿{
+    "flowExecutionEvents": [
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "Do you offer price matching if I find the item cheaper somewhere else?"
+                        },
+                        "name": "document",
+                        "next": [
+                            {
+                                "inputFieldName": "question",
+                                "nodeName": "OtherRequestPrompt"
+                            },
+                            {
+                                "inputFieldName": "topic",
+                                "nodeName": "ClassifierPrompt"
+                            },
+                            {
+                                "inputFieldName": "question",
+                                "nodeName": "PlatformQuestionPrompt"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "FlowInputNode",
+                "timestamp": "2026-08-21T06:06:47.576481+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "Do you offer price matching if I find the item cheaper somewhere else?"
+                        },
+                        "name": "topic",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "FlowInputNode",
+                            "outputFieldName": "document"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ClassifierPrompt",
+                "timestamp": "2026-08-21T06:06:47.755585+00:00"
+            }
+        },
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "PLATFORM_QUESTION"
+                        },
+                        "name": "modelCompletion",
+                        "next": [
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "FallbackOutput"
+                            },
+                            {
+                                "inputFieldName": "conditionInput",
+                                "nodeName": "ConditionNode_1"
+                            },
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "BugReportOutput"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ClassifierPrompt",
+                "timestamp": "2026-08-21T06:06:48.912633+00:00"
+            }
+        },
+        {
+            "nodeActionEvent": {
+                "nodeName": "ClassifierPrompt",
+                "operationName": "Converse",
+                "operationRequest": {
+                    "requestMetadata": {},
+                    "promptVariables": {},
+                    "system": [],
+                    "additionalModelRequestFields": null,
+                    "modelId": "amazon.nova-pro-v1:0",
+                    "inferenceConfig": {
+                        "maxTokens": 512,
+                        "temperature": 0.7,
+                        "topP": 1.0,
+                        "stopSequences": []
+                    },
+                    "additionalModelResponseFieldPaths": [],
+                    "messages": [
+                        {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": "You are a message classifier for a customer support chatbot. Classify the customer's message into exactly one category.\n\nCategories:\n- BUG_REPORT: the customer is reporting a problem, error, or something not working correctly on the platform\n- PLATFORM_QUESTION: the customer is asking about orders, shipping, returns, payments, or how the platform works\n- OTHER_REQUEST: the message doesn't clearly fit either category above\n\nCustomer message: Do you offer price matching if I find the item cheaper somewhere else?\n\nRespond with ONLY the category name and absolutely nothing else. Do not explain your reasoning. Do not add punctuation. Do not add any other words. Your entire response must be exactly one of: BUG_REPORT, PLATFORM_QUESTION, OTHER_REQUEST"
+                                }
+                            ],
+                            "role": "user"
+                        }
+                    ]
+                },
+                "operationResponse": {
+                    "output": {
+                        "message": {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": "PLATFORM_QUESTION"
+                                }
+                            ],
+                            "role": "assistant"
+                        },
+                        "type": "MESSAGE"
+                    },
+                    "stopReason": "end_turn",
+                    "sdkHttpResponse": {
+                        "statusText": "OK",
+                        "statusCode": 200,
+                        "successful": true
+                    },
+                    "responseMetadata": {
+                        "metadata": {
+                            "Connection": "keep-alive",
+                            "x-amzn-RequestId": "d4f70404-3bb8-451e-a052-ce6964dae549",
+                            "AWS_REQUEST_ID": "d4f70404-3bb8-451e-a052-ce6964dae549",
+                            "Content-Length": "220",
+                            "Date": "Fri, 21 Aug 2026 06:06:48 GMT",
+                            "Content-Type": "application/json"
+                        }
+                    },
+                    "metrics": {
+                        "latencyMs": 427
+                    },
+                    "usage": {
+                        "inputTokens": 160,
+                        "outputTokens": 6,
+                        "totalTokens": 166,
+                        "cacheDetails": []
+                    }
+                },
+                "requestId": "d4f70404-3bb8-451e-a052-ce6964dae549",
+                "serviceName": "bedrock",
+                "timestamp": "2026-08-21T06:06:48.972068+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "PLATFORM_QUESTION"
+                        },
+                        "name": "conditionInput",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "ClassifierPrompt",
+                            "outputFieldName": "modelCompletion"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ConditionNode_1",
+                "timestamp": "2026-08-21T06:06:49.289200+00:00"
+            }
+        },
+        {
+            "conditionResultEvent": {
+                "nodeName": "ConditionNode_1",
+                "satisfiedConditions": [
+                    {
+                        "conditionName": "PlatformQuestion"
+                    }
+                ],
+                "timestamp": "2026-08-21T06:06:49.572527+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "Do you offer price matching if I find the item cheaper somewhere else?"
+                        },
+                        "name": "question",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "FlowInputNode",
+                            "outputFieldName": "document"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "PlatformQuestionPrompt",
+                "timestamp": "2026-08-21T06:06:49.871402+00:00"
+            }
+        },
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "I'm sorry, I don't have information on that. Please call our support line at 1-800-555-0199 for further help."
+                        },
+                        "name": "modelCompletion",
+                        "next": [
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "PlatformQuestionOutput"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "PlatformQuestionPrompt",
+                "timestamp": "2026-08-21T06:06:50.568057+00:00"
+            }
+        },
+        {
+            "nodeActionEvent": {
+                "nodeName": "PlatformQuestionPrompt",
+                "operationName": "Converse",
+                "operationRequest": {
+                    "requestMetadata": {},
+                    "promptVariables": {},
+                    "system": [],
+                    "additionalModelRequestFields": null,
+                    "modelId": "amazon.nova-pro-v1:0",
+                    "inferenceConfig": {
+                        "maxTokens": 512,
+                        "temperature": 0.7,
+                        "topP": 1.0,
+                        "stopSequences": []
+                    },
+                    "additionalModelResponseFieldPaths": [],
+                    "messages": [
+                        {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": 

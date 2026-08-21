@@ -1,0 +1,47 @@
+﻿{
+    "jobName": "flow-eval-run-1",
+    "status": "Completed",
+    "jobArn": "arn:aws:bedrock:us-east-1:843794985908:evaluation-job/ohptuse053je",
+    "roleArn": "arn:aws:iam::843794985908:role/bedrock-eval-role",
+    "jobType": "Automated",
+    "applicationType": "ModelEvaluation",
+    "evaluationConfig": {
+        "automated": {
+            "datasetMetricConfigs": [
+                {
+                    "taskType": "General",
+                    "dataset": {
+                        "name": "flow-eval-dataset",
+                        "datasetLocation": {
+                            "s3Uri": "s3://udacity-agentic-engineer-c1-eval-843794985908/output_eval_dataset.jsonl"
+                        }
+                    },
+                    "metricNames": [
+                        "Builtin.Correctness"
+                    ]
+                }
+            ],
+            "evaluatorModelConfig": {
+                "bedrockEvaluatorModels": [
+                    {
+                        "modelIdentifier": "amazon.nova-pro-v1:0"
+                    }
+                ]
+            }
+        }
+    },
+    "inferenceConfig": {
+        "models": [
+            {
+                "precomputedInferenceSource": {
+                    "inferenceSourceIdentifier": "my-flow-app"
+                }
+            }
+        ]
+    },
+    "outputDataConfig": {
+        "s3Uri": "s3://udacity-agentic-engineer-c1-eval-843794985908/results/"
+    },
+    "creationTime": "2026-08-21T05:40:25.148940+00:00",
+    "lastModifiedTime": "2026-08-21T05:47:34.968425+00:00"
+}

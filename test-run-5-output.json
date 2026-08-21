@@ -1,0 +1,320 @@
+﻿{
+    "flowExecutionEvents": [
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "I want to speak to a manager about a billing dispute from last year."
+                        },
+                        "name": "document",
+                        "next": [
+                            {
+                                "inputFieldName": "question",
+                                "nodeName": "OtherRequestPrompt"
+                            },
+                            {
+                                "inputFieldName": "topic",
+                                "nodeName": "ClassifierPrompt"
+                            },
+                            {
+                                "inputFieldName": "question",
+                                "nodeName": "PlatformQuestionPrompt"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "FlowInputNode",
+                "timestamp": "2026-08-21T05:09:46.854861+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "I want to speak to a manager about a billing dispute from last year."
+                        },
+                        "name": "topic",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "FlowInputNode",
+                            "outputFieldName": "document"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ClassifierPrompt",
+                "timestamp": "2026-08-21T05:09:47.123638+00:00"
+            }
+        },
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "OTHER_REQUEST"
+                        },
+                        "name": "modelCompletion",
+                        "next": [
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "FallbackOutput"
+                            },
+                            {
+                                "inputFieldName": "conditionInput",
+                                "nodeName": "ConditionNode_1"
+                            },
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "BugReportOutput"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ClassifierPrompt",
+                "timestamp": "2026-08-21T05:09:47.730122+00:00"
+            }
+        },
+        {
+            "nodeActionEvent": {
+                "nodeName": "ClassifierPrompt",
+                "operationName": "Converse",
+                "operationRequest": {
+                    "requestMetadata": {},
+                    "promptVariables": {},
+                    "system": [],
+                    "additionalModelRequestFields": null,
+                    "modelId": "amazon.nova-pro-v1:0",
+                    "inferenceConfig": {
+                        "maxTokens": 512,
+                        "temperature": 0.7,
+                        "topP": 1.0,
+                        "stopSequences": []
+                    },
+                    "additionalModelResponseFieldPaths": [],
+                    "messages": [
+                        {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": "You are a message classifier for a customer support chatbot. Classify the customer's message into exactly one category.\n\nCategories:\n- BUG_REPORT: the customer is reporting a problem, error, or something not working correctly on the platform\n- PLATFORM_QUESTION: the customer is asking about orders, shipping, returns, payments, or how the platform works\n- OTHER_REQUEST: the message doesn't clearly fit either category above\n\nCustomer message: I want to speak to a manager about a billing dispute from last year.\n\nRespond with ONLY the category name and absolutely nothing else. Do not explain your reasoning. Do not add punctuation. Do not add any other words. Your entire response must be exactly one of: BUG_REPORT, PLATFORM_QUESTION, OTHER_REQUEST"
+                                }
+                            ],
+                            "role": "user"
+                        }
+                    ]
+                },
+                "operationResponse": {
+                    "output": {
+                        "message": {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": "OTHER_REQUEST"
+                                }
+                            ],
+                            "role": "assistant"
+                        },
+                        "type": "MESSAGE"
+                    },
+                    "stopReason": "end_turn",
+                    "sdkHttpResponse": {
+                        "statusText": "OK",
+                        "statusCode": 200,
+                        "successful": true
+                    },
+                    "responseMetadata": {
+                        "metadata": {
+                            "Connection": "keep-alive",
+                            "x-amzn-RequestId": "5908d607-603f-48e2-91a2-7a393a006384",
+                            "AWS_REQUEST_ID": "5908d607-603f-48e2-91a2-7a393a006384",
+                            "Content-Length": "216",
+                            "Date": "Fri, 21 Aug 2026 05:09:47 GMT",
+                            "Content-Type": "application/json"
+                        }
+                    },
+                    "metrics": {
+                        "latencyMs": 324
+                    },
+                    "usage": {
+                        "inputTokens": 161,
+                        "outputTokens": 4,
+                        "totalTokens": 165,
+                        "cacheDetails": []
+                    }
+                },
+                "requestId": "5908d607-603f-48e2-91a2-7a393a006384",
+                "serviceName": "bedrock",
+                "timestamp": "2026-08-21T05:09:47.812549+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "OTHER_REQUEST"
+                        },
+                        "name": "conditionInput",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "ClassifierPrompt",
+                            "outputFieldName": "modelCompletion"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "ConditionNode_1",
+                "timestamp": "2026-08-21T05:09:48.092496+00:00"
+            }
+        },
+        {
+            "conditionResultEvent": {
+                "nodeName": "ConditionNode_1",
+                "satisfiedConditions": [
+                    {
+                        "conditionName": "OtherRequest"
+                    }
+                ],
+                "timestamp": "2026-08-21T05:09:48.429988+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "I want to speak to a manager about a billing dispute from last year."
+                        },
+                        "name": "question",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "FlowInputNode",
+                            "outputFieldName": "document"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "OtherRequestPrompt",
+                "timestamp": "2026-08-21T05:09:48.673067+00:00"
+            }
+        },
+        {
+            "nodeOutputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "Hello! A member of our support team can assist you with your billing dispute. Please call us at 1-800-555-0199 for help. Thank you!"
+                        },
+                        "name": "modelCompletion",
+                        "next": [
+                            {
+                                "inputFieldName": "document",
+                                "nodeName": "OtherRequestOutput"
+                            }
+                        ],
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "OtherRequestPrompt",
+                "timestamp": "2026-08-21T05:09:49.339904+00:00"
+            }
+        },
+        {
+            "nodeActionEvent": {
+                "nodeName": "OtherRequestPrompt",
+                "operationName": "Converse",
+                "operationRequest": {
+                    "requestMetadata": {},
+                    "promptVariables": {},
+                    "system": [],
+                    "additionalModelRequestFields": null,
+                    "modelId": "amazon.nova-pro-v1:0",
+                    "inferenceConfig": {
+                        "maxTokens": 512,
+                        "temperature": 0.7,
+                        "topP": 1.0,
+                        "stopSequences": []
+                    },
+                    "additionalModelResponseFieldPaths": [],
+                    "messages": [
+                        {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": "You are a customer support assistant. The customer's message doesn't relate to a bug report or a question covered by our FAQ. Politely let them know a member of our support team can help, and direct them to call 1-800-555-0199. Keep the response short and friendly. Do not ask follow-up questions.\n\nCustomer message: I want to speak to a manager about a billing dispute from last year."
+                                }
+                            ],
+                            "role": "user"
+                        }
+                    ]
+                },
+                "operationResponse": {
+                    "output": {
+                        "message": {
+                            "content": [
+                                {
+                                    "type": "TEXT",
+                                    "text": "Hello! A member of our support team can assist you with your billing dispute. Please call us at 1-800-555-0199 for help. Thank you!"
+                                }
+                            ],
+                            "role": "assistant"
+                        },
+                        "type": "MESSAGE"
+                    },
+                    "stopReason": "end_turn",
+                    "sdkHttpResponse": {
+                        "statusText": "OK",
+                        "statusCode": 200,
+                        "successful": true
+                    },
+                    "responseMetadata": {
+                        "metadata": {
+                            "Connection": "keep-alive",
+                            "x-amzn-RequestId": "939ef206-84b4-47c1-85a4-07c9b1559179",
+                            "AWS_REQUEST_ID": "939ef206-84b4-47c1-85a4-07c9b1559179",
+                            "Content-Length": "334",
+                            "Date": "Fri, 21 Aug 2026 05:09:49 GMT",
+                            "Content-Type": "application/json"
+                        }
+                    },
+                    "metrics": {
+                        "latencyMs": 415
+                    },
+                    "usage": {
+                        "inputTokens": 96,
+                        "outputTokens": 42,
+                        "totalTokens": 138,
+                        "cacheDetails": []
+                    }
+                },
+                "requestId": "939ef206-84b4-47c1-85a4-07c9b1559179",
+                "serviceName": "bedrock",
+                "timestamp": "2026-08-21T05:09:49.386307+00:00"
+            }
+        },
+        {
+            "nodeInputEvent": {
+                "fields": [
+                    {
+                        "content": {
+                            "document": "Hello! A member of our support team can assist you with your billing dispute. Please call us at 1-800-555-0199 for help. Thank you!"
+                        },
+                        "name": "document",
+                        "source": {
+                            "expression": "$.data",
+                            "nodeName": "OtherRequestPrompt",
+                            "outputFieldName": "modelCompletion"
+                        },
+                        "type": "String"
+                    }
+                ],
+                "nodeName": "OtherRequestOutput",
+                "timestamp": "2026-08-21T05:09:49.652817+00:00"
+            }
+        }
+    ]
+}

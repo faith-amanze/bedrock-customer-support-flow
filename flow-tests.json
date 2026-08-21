@@ -1,0 +1,22 @@
+{
+  "flowInputNode": {
+    "nodeName": "FlowInputNode"
+  },
+  "tests": [
+    {
+      "id": "t1_bug_report",
+      "prompt": "The checkout page crashes when I click the Pay button",
+      "expected": "Acknowledges the bug report and indicates a ticket or follow-up will happen"
+    },
+    {
+      "id": "t2_platform_question",
+      "prompt": "How long do I have to return an item?",
+      "expected": "States that items can be returned within 30 days of delivery, based on the FAQ"
+    },
+    {
+      "id": "t3_other_request",
+      "prompt": "I want to speak to a manager about a billing dispute from last year.",
+      "expected": "Politely redirects the customer to call the support phone number"
+    }
+  ]
+}

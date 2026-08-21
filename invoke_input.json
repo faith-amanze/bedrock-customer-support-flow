@@ -1,0 +1,9 @@
+[
+  {
+    "content": {
+      "document": "Do you offer price matching if I find the item cheaper somewhere else?"
+    },
+    "nodeName": "FlowInputNode",
+    "nodeOutputName": "document"
+  }
+]
