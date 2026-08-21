@@ -1,0 +1,21 @@
+{
+  "automated": {
+    "datasetMetricConfigs": [
+      {
+        "taskType": "General",
+        "dataset": {
+          "name": "flow-eval-dataset-final",
+          "datasetLocation": {
+            "s3Uri": "s3://udacity-agentic-engineer-c1-eval-843794985908/output_eval_dataset_final.jsonl"
+          }
+        },
+        "metricNames": ["Builtin.Correctness"]
+      }
+    ],
+    "evaluatorModelConfig": {
+      "bedrockEvaluatorModels": [
+        {"modelIdentifier": "amazon.nova-pro-v1:0"}
+      ]
+    }
+  }
+}

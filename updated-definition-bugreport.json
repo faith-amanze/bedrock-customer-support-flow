@@ -1,0 +1,509 @@
+{
+  "nodes": [
+    {
+      "name": "FlowInputNode",
+      "type": "Input",
+      "configuration": {
+        "input": {}
+      },
+      "outputs": [
+        {
+          "name": "document",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ClassifierPrompt",
+      "type": "Prompt",
+      "configuration": {
+        "prompt": {
+          "sourceConfiguration": {
+            "inline": {
+              "templateType": "TEXT",
+              "templateConfiguration": {
+                "text": {
+                  "text": "You are a message classifier for a customer support chatbot. Classify the customer's message into exactly one category.\n\nCategories:\n- BUG_REPORT: the customer is reporting a problem, error, or something not working correctly on the platform\n- PLATFORM_QUESTION: the customer is asking about orders, shipping, returns, payments, or how the platform works\n- OTHER_REQUEST: the message doesn't clearly fit either category above\n\nCustomer message: {{topic}}\n\nRespond with ONLY the category name and absolutely nothing else. Do not explain your reasoning. Do not add punctuation. Do not add any other words. Your entire response must be exactly one of: BUG_REPORT, PLATFORM_QUESTION, OTHER_REQUEST",
+                  "inputVariables": [
+                    {
+                      "name": "topic"
+                    }
+                  ]
+                }
+              },
+              "modelId": "amazon.nova-pro-v1:0",
+              "inferenceConfiguration": {
+                "text": {
+                  "temperature": 0.699999988079071,
+                  "topP": 1.0,
+                  "maxTokens": 512,
+                  "stopSequences": []
+                }
+              }
+            }
+          },
+          "guardrailConfiguration": {
+            "guardrailIdentifier": "vn22c9cv3d7w",
+            "guardrailVersion": "3"
+          }
+        }
+      },
+      "inputs": [
+        {
+          "name": "topic",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "modelCompletion",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "BugReportOutput",
+      "type": "Output",
+      "configuration": {
+        "output": {}
+      },
+      "inputs": [
+        {
+          "name": "document",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ]
+    },
+    {
+      "name": "PlatformQuestionOutput",
+      "type": "Output",
+      "configuration": {
+        "output": {}
+      },
+      "inputs": [
+        {
+          "name": "document",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ]
+    },
+    {
+      "name": "OtherRequestOutput",
+      "type": "Output",
+      "configuration": {
+        "output": {}
+      },
+      "inputs": [
+        {
+          "name": "document",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ]
+    },
+    {
+      "name": "FallbackOutput",
+      "type": "Output",
+      "configuration": {
+        "output": {}
+      },
+      "inputs": [
+        {
+          "name": "document",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ]
+    },
+    {
+      "name": "ConditionNode_1",
+      "type": "Condition",
+      "configuration": {
+        "condition": {
+          "conditions": [
+            {
+              "name": "BugReport",
+              "expression": "conditionInput == \"BUG_REPORT\""
+            },
+            {
+              "name": "PlatformQuestion",
+              "expression": "conditionInput == \"PLATFORM_QUESTION\""
+            },
+            {
+              "name": "OtherRequest",
+              "expression": "conditionInput == \"OTHER_REQUEST\""
+            },
+            {
+              "name": "default"
+            }
+          ]
+        }
+      },
+      "inputs": [
+        {
+          "name": "conditionInput",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ]
+    },
+    {
+      "name": "OtherRequestPrompt",
+      "type": "Prompt",
+      "configuration": {
+        "prompt": {
+          "sourceConfiguration": {
+            "inline": {
+              "templateType": "TEXT",
+              "templateConfiguration": {
+                "text": {
+                  "text": "You are a customer support assistant. The customer's message doesn't relate to a bug report or a question covered by our FAQ. Politely let them know a member of our support team can help, and direct them to call 1-800-555-0199. Keep the response short and friendly. Do not ask follow-up questions.\n\nCustomer message: {{question}}",
+                  "inputVariables": [
+                    {
+                      "name": "question"
+                    }
+                  ]
+                }
+              },
+              "modelId": "amazon.nova-pro-v1:0",
+              "inferenceConfiguration": {
+                "text": {
+                  "temperature": 0.699999988079071,
+                  "topP": 1.0,
+                  "maxTokens": 512,
+                  "stopSequences": []
+                }
+              }
+            }
+          },
+          "guardrailConfiguration": {
+            "guardrailIdentifier": "vn22c9cv3d7w",
+            "guardrailVersion": "3"
+          }
+        }
+      },
+      "inputs": [
+        {
+          "name": "question",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "modelCompletion",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "PlatformQuestionKB",
+      "type": "KnowledgeBase",
+      "configuration": {
+        "knowledgeBase": {
+          "knowledgeBaseId": "P2VFMMWIHU"
+        }
+      },
+      "inputs": [
+        {
+          "name": "retrievalQuery",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "retrievalResults",
+          "type": "Array"
+        }
+      ]
+    },
+    {
+      "name": "PlatformQuestionGenPrompt",
+      "type": "Prompt",
+      "configuration": {
+        "prompt": {
+          "sourceConfiguration": {
+            "inline": {
+              "templateType": "TEXT",
+              "templateConfiguration": {
+                "text": {
+                  "text": "You are a customer support assistant for an online shop. Below are retrieved FAQ excerpts that may or may not be relevant to the customer's question. If the excerpts clearly answer the question, give a clear, friendly answer based on them. If they don't contain a relevant answer, do not guess -- respond with exactly: \"I'm sorry, I don't have information on that. Please call our support line at 1-800-555-0199 for further help.\"\n\nRetrieved excerpts:\n{{excerpts}}\n\nCustomer question: {{question}}",
+                  "inputVariables": [
+                    {
+                      "name": "excerpts"
+                    },
+                    {
+                      "name": "question"
+                    }
+                  ]
+                }
+              },
+              "modelId": "amazon.nova-pro-v1:0",
+              "inferenceConfiguration": {
+                "text": {
+                  "temperature": 0.699999988079071,
+                  "topP": 1.0,
+                  "maxTokens": 512,
+                  "stopSequences": []
+                }
+              }
+            }
+          },
+          "guardrailConfiguration": {
+            "guardrailIdentifier": "vn22c9cv3d7w",
+            "guardrailVersion": "3"
+          }
+        }
+      },
+      "inputs": [
+        {
+          "name": "excerpts",
+          "type": "Array",
+          "expression": "$.data"
+        },
+        {
+          "name": "question",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "modelCompletion",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "BugReportPrompt",
+      "type": "Prompt",
+      "configuration": {
+        "prompt": {
+          "sourceConfiguration": {
+            "inline": {
+              "templateType": "TEXT",
+              "templateConfiguration": {
+                "text": {
+                  "text": "You are a customer support assistant. The customer has reported a bug. Acknowledge their report warmly, confirm that a support ticket has been created, and let them know the team will follow up. If the customer's message is missing helpful detail (like the steps to reproduce the issue or their browser/OS/device), politely ask them to share those details so the team can investigate faster. Do not invent a ticket number -- refer to it generically as 'your ticket'. Keep the response short and friendly.\n\nCustomer message: {{message}}",
+                  "inputVariables": [
+                    {
+                      "name": "message"
+                    }
+                  ]
+                }
+              },
+              "modelId": "amazon.nova-pro-v1:0",
+              "inferenceConfiguration": {
+                "text": {
+                  "temperature": 0.7,
+                  "topP": 1.0,
+                  "maxTokens": 512,
+                  "stopSequences": []
+                }
+              }
+            }
+          },
+          "guardrailConfiguration": {
+            "guardrailIdentifier": "vn22c9cv3d7w",
+            "guardrailVersion": "3"
+          }
+        }
+      },
+      "inputs": [
+        {
+          "name": "message",
+          "type": "String",
+          "expression": "$.data"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "modelCompletion",
+          "type": "String"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "type": "Data",
+      "name": "FlowInputNodeFlowInputNode0ToClassifierPromptPromptsNode0",
+      "source": "FlowInputNode",
+      "target": "ClassifierPrompt",
+      "configuration": {
+        "data": {
+          "sourceOutput": "document",
+          "targetInput": "topic"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "ClassifierPromptPromptsNode0ToConditionNode_1ConditionNode0",
+      "source": "ClassifierPrompt",
+      "target": "ConditionNode_1",
+      "configuration": {
+        "data": {
+          "sourceOutput": "modelCompletion",
+          "targetInput": "conditionInput"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "ClassifierPromptPromptsNode0ToFallbackOutputFlowOutputNode0",
+      "source": "ClassifierPrompt",
+      "target": "FallbackOutput",
+      "configuration": {
+        "data": {
+          "sourceOutput": "modelCompletion",
+          "targetInput": "document"
+        }
+      }
+    },
+    {
+      "type": "Conditional",
+      "name": "ConditionNode_1ConditionNode1ToFallbackOutputFlowOutputNode0",
+      "source": "ConditionNode_1",
+      "target": "FallbackOutput",
+      "configuration": {
+        "conditional": {
+          "condition": "default"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "FlowInputNodeFlowInputNode0ToOtherRequestPromptPromptsNode0",
+      "source": "FlowInputNode",
+      "target": "OtherRequestPrompt",
+      "configuration": {
+        "data": {
+          "sourceOutput": "document",
+          "targetInput": "question"
+        }
+      }
+    },
+    {
+      "type": "Conditional",
+      "name": "ConditionNode_1ConditionNode2ToOtherRequestPromptPromptsNode0",
+      "source": "ConditionNode_1",
+      "target": "OtherRequestPrompt",
+      "configuration": {
+        "conditional": {
+          "condition": "OtherRequest"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "OtherRequestPromptPromptsNode0ToOtherRequestOutputFlowOutputNode0",
+      "source": "OtherRequestPrompt",
+      "target": "OtherRequestOutput",
+      "configuration": {
+        "data": {
+          "sourceOutput": "modelCompletion",
+          "targetInput": "document"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "FlowInputNodeFlowInputNode0ToPlatformQuestionKBKnowledgeBaseNode0",
+      "source": "FlowInputNode",
+      "target": "PlatformQuestionKB",
+      "configuration": {
+        "data": {
+          "sourceOutput": "document",
+          "targetInput": "retrievalQuery"
+        }
+      }
+    },
+    {
+      "type": "Conditional",
+      "name": "ConditionNode_1ConditionNode1ToPlatformQuestionKBKnowledgeBaseNode0",
+      "source": "ConditionNode_1",
+      "target": "PlatformQuestionKB",
+      "configuration": {
+        "conditional": {
+          "condition": "PlatformQuestion"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "PlatformQuestionKBKnowledgeBaseNode0ToPlatformQuestionGenPromptPromptsNode0",
+      "source": "PlatformQuestionKB",
+      "target": "PlatformQuestionGenPrompt",
+      "configuration": {
+        "data": {
+          "sourceOutput": "retrievalResults",
+          "targetInput": "excerpts"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "FlowInputNodeFlowInputNode0ToPlatformQuestionGenPromptPromptsNode1",
+      "source": "FlowInputNode",
+      "target": "PlatformQuestionGenPrompt",
+      "configuration": {
+        "data": {
+          "sourceOutput": "document",
+          "targetInput": "question"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "PlatformQuestionGenPromptPromptsNode0ToPlatformQuestionOutputFlowOutputNode0",
+      "source": "PlatformQuestionGenPrompt",
+      "target": "PlatformQuestionOutput",
+      "configuration": {
+        "data": {
+          "sourceOutput": "modelCompletion",
+          "targetInput": "document"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "FlowInputToBugReportPrompt",
+      "source": "FlowInputNode",
+      "target": "BugReportPrompt",
+      "configuration": {
+        "data": {
+          "sourceOutput": "document",
+          "targetInput": "message"
+        }
+      }
+    },
+    {
+      "type": "Conditional",
+      "name": "ConditionToBugReportPrompt",
+      "source": "ConditionNode_1",
+      "target": "BugReportPrompt",
+      "configuration": {
+        "conditional": {
+          "condition": "BugReport"
+        }
+      }
+    },
+    {
+      "type": "Data",
+      "name": "BugReportPromptToOutput",
+      "source": "BugReportPrompt",
+      "target": "BugReportOutput",
+      "configuration": {
+        "data": {
+          "sourceOutput": "modelCompletion",
+          "targetInput": "document"
+        }
+      }
+    }
+  ]
+}
