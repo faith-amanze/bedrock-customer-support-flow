@@ -2,7 +2,7 @@
 
 ## Final results (after fixes)
 
-Ran `generate-eval-dataset.py` against `customer-request-flow` (flow ID: VJD7SPYVVH, alias: v1, version 10) with 7 test cases covering all three routing paths plus edge cases (ambiguous message, very short message, uncovered FAQ question, prompt injection attempt). Uploaded results to Bedrock Evaluations using LLM-as-a-judge (Amazon Nova Pro) with the Builtin.Correctness metric.
+Ran `evaluation/generate-eval-dataset.py` against `customer-request-flow` (flow ID: VJD7SPYVVH, alias: v1, version 10) with 7 test cases covering all three routing paths plus edge cases (ambiguous message, very short message, uncovered FAQ question, prompt injection attempt). Uploaded results to Bedrock Evaluations using LLM-as-a-judge (Amazon Nova Pro) with the Builtin.Correctness metric.
 
 **Result: 1.00 average correctness across all 7 tests** (job: flow-eval-run-final, see eval-results-final.jsonl).
 
@@ -19,6 +19,6 @@ An earlier run (flow-eval-run-3, before the bug report path was fixed) scored 0.
 
 The bug report path was originally designed to use a **Bedrock Agent** to collect information conversationally and invoke a Lambda tool to create the ticket automatically. This could not be wired into the flow because **Bedrock Agents Classic closed to new customers on July 30, 2026**, and this AWS account has no prior agent usage, so `CreateAgent` returns `AccessDeniedException` (confirmed on two different AWS accounts across this project, and reproducible via CLI at any time).
 
-- The Lambda tool itself (`create_bug_report.py`) works correctly and was tested directly -- see `response2.json` and `screenshots/06-dynamodb-bug-report-record.png` for a successfully created ticket in DynamoDB.
+- The Lambda tool itself (`lambda/create_bug_report.py`) works correctly and was tested directly -- see `evidence/response2.json` and `screenshots/06-dynamodb-bug-report-record.png` for a successfully created ticket in DynamoDB.
 - As a substitute that does not require the blocked Agent, the flow now includes a BugReportPrompt node that produces a realistic, helpful acknowledgment message (confirming a ticket, asking for missing details) directly from the classifier's output. This does not call the Lambda tool or write a real DynamoDB record as part of the flow itself -- that connection would require the Agent (or an equivalent Lambda-invoking mechanism) that this account cannot currently provision.
 - Console evidence of the platform-level Agent block: `screenshots/agents-classic-maintenance-mode.png` and `screenshots/05-bug-report-agent-blocked.png`.
